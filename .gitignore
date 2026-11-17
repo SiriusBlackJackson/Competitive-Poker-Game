@@ -1,0 +1,28 @@
+# Build output (the release binaries in dist/ ARE committed, so a clone can run immediately)
+build/out/
+dist/*.idsig
+
+# Generated at runtime
+selftest.txt
+start.png
+game.png
+dialog.png
+rank.png
+rules.png
+lang.png
+settings.ini
+
+# Per-user settings (portable mode writes settings.ini next to the exe)
+*.ini
+
+# Visual Studio / Rider caches
+.vs/
+.idea/
+*.user
+*.suo
+
+# Downloaded toolchains (JDK + Android SDK, several hundred MB)
+build/tools/
+
+# The zip handed out for GitHub upload (archive of this repo, must not live inside it)
+*-GitHub*.zip

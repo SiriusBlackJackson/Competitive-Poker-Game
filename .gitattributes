@@ -1,0 +1,12 @@
+* text=auto
+*.cs      text
+*.java    text
+*.ps1     text
+*.xml     text
+*.md      text
+*.yml     text
+*.png     binary
+*.ico     binary
+*.exe     binary
+*.apk     binary
+*.zip     binary

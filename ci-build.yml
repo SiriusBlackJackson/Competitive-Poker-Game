@@ -1,0 +1,66 @@
+name: build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  desktop:
+    name: Desktop (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build portable zip and setup
+        shell: pwsh
+        run: ./build/package.ps1
+
+      - name: Smoke test the executable
+        shell: pwsh
+        run: |
+          ./dist/ZhengShangYou.exe -selftest
+          Get-Content ./selftest.txt | Select-Object -Last 12
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ZhengShangYou-desktop
+          path: |
+            dist/ZhengShangYou.exe
+            dist/ZhengShangYou-Portable.zip
+            dist/ZhengShangYou-Setup.exe
+
+  android:
+    name: Android APK
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Android SDK packages
+        shell: pwsh
+        run: |
+          $sdk = Join-Path $env:RUNNER_TEMP "android-sdk"
+          $base = "https://dl.google.com/android/repository/commandlinetools-win-11076708_latest.zip"
+          Invoke-WebRequest -Uri $base -OutFile "$env:RUNNER_TEMP\cmdline.zip"
+          Expand-Archive "$env:RUNNER_TEMP\cmdline.zip" -DestinationPath $sdk
+          Move-Item (Join-Path $sdk "cmdline-tools") (Join-Path $sdk "cmdline-tools-tmp")
+          New-Item -ItemType Directory (Join-Path $sdk "cmdline-tools\latest") | Out-Null
+          Move-Item (Join-Path $sdk "cmdline-tools-tmp\*") (Join-Path $sdk "cmdline-tools\latest")
+          "y`r`n" * 20 | & (Join-Path $sdk "cmdline-tools\latest\bin\sdkmanager.bat") --sdk_root=$sdk --licenses
+          "y`r`n" * 20 | & (Join-Path $sdk "cmdline-tools\latest\bin\sdkmanager.bat") --sdk_root=$sdk "platforms;android-33" "build-tools;33.0.2"
+          "ANDROID_HOME=$sdk" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Build APK
+        shell: pwsh
+        run: ./android/build/build-apk.ps1
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ZhengShangYou-apk
+          path: dist/ZhengShangYou.apk
