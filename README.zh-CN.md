@@ -9,10 +9,12 @@
 
 | 版本 | 文件 | 说明 |
 | --- | --- | --- |
-| 桌面版 | `ZhengShangYou.exe` | 130 KB 单文件，Windows 7 以上自带 .NET 4.x 即可运行 |
-| 便携版 | `ZhengShangYou-Portable.zip` | 解压即玩，设置在 exe 同目录的 `settings.ini` |
-| 安装版 | `ZhengShangYou-Setup.exe` | 安装器本身支持 8 语言，装到 `%LOCALAPPDATA%\Programs\ZhengShangYou`，建桌面与开始菜单快捷方式，可从「应用和功能」卸载 |
-| 安卓版 | `ZhengShangYou.apk` | minSdk 21 / targetSdk 33，横屏触屏牌桌，同样 8 语言 |
+| 桌面版 | [`ZhengShangYou.exe`](https://github.com/SiriusBlackJackson/Competitive-Poker-Game/releases/latest/download/ZhengShangYou.exe) | 130 KB 单文件，Windows 7 以上自带 .NET 4.x 即可运行 |
+| 便携版 | [`ZhengShangYou-Portable.zip`](https://github.com/SiriusBlackJackson/Competitive-Poker-Game/releases/latest/download/ZhengShangYou-Portable.zip) | 解压即玩，设置在 exe 同目录的 `settings.ini` |
+| 安装版 | [`ZhengShangYou-Setup.exe`](https://github.com/SiriusBlackJackson/Competitive-Poker-Game/releases/latest/download/ZhengShangYou-Setup.exe) | 安装器本身支持 8 语言，装到 `%LOCALAPPDATA%\Programs\ZhengShangYou`，建桌面与开始菜单快捷方式，可从「应用和功能」卸载 |
+| 安卓版 | [`ZhengShangYou.apk`](https://github.com/SiriusBlackJackson/Competitive-Poker-Game/releases/latest/download/ZhengShangYou.apk) | minSdk 21 / targetSdk 33，横屏触屏牌桌，同样 8 语言 |
+
+四个成品都挂在 [Releases](https://github.com/SiriusBlackJackson/Competitive-Poker-Game/releases) 上，上面的 `releases/latest/download/…` 链接始终指向最新版本，发新版也不会失效。
 
 ## 语言切换
 
@@ -53,6 +55,17 @@
 
 ## 从源码构建
 
+本仓库为方便浏览，所有文件平铺在根目录；构建脚本仍按开发时的目录结构写，所以要重新编译，先把文件放回原位：
+
+| 当前文件 | 放回 |
+| --- | --- |
+| `Core.cs` `Lang.cs` `Cards2D.cs` `UI.cs` `Game.cs` | `src\` |
+| `installer-Installer.cs` | `build\installer\Installer.cs` |
+| `build.ps1` `package.ps1` | `build\` |
+| `engine-*.java`、`app-*.java` | `android\app\src\main\java\com\zhengshengyou\engine\` 与 `…\app\` |
+| `AndroidManifest.xml`、`strings*.xml`、`ic_launcher-*.png` | `android\app\src\main\` 下的对应目录 |
+| `game.ico` | `assets\icon\game.ico` |
+
 ```powershell
 powershell -ExecutionPolicy Bypass -File build\package.ps1            # exe + 便携 zip + setup
 powershell -ExecutionPolicy Bypass -File android\build\build-apk.ps1  # APK
@@ -67,7 +80,7 @@ git remote add origin https://github.com/<你的用户名>/<仓库名>.git
 git push -u origin main
 ```
 
-仓库里已经包含源码、文档、截图和四个可直接运行的产物（`dist/`），克隆下来就能玩。
+仓库里已经包含源码、文档、截图和四个可直接运行的产物，全部在根目录：`ZhengShangYou.exe`、`ZhengShangYou-Portable.zip`、`ZhengShangYou-Setup.exe`、`ZhengShangYou.apk`，下载即用。
 
 ## 许可
 

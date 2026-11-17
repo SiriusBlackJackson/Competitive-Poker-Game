@@ -23,11 +23,14 @@ already ships with Windows.
 
 | Build | File | Notes |
 | --- | --- | --- |
-| Portable | `ZhengShangYou-Portable.zip` | unzip anywhere and run `ZhengShangYou.exe`; settings stay beside the exe |
-| Installer | `ZhengShangYou-Setup.exe` | its own 8-language UI (switches instantly from a drop-down); installs to `%LOCALAPPDATA%\Programs\ZhengShangYou`, creates Desktop + Start Menu shortcuts, adds an entry to *Apps & features*, launches the game in the chosen language, and can uninstall itself (`--uninstall`) |
-| Android | `ZhengShangYou.apk` | minSdk 21, targetSdk 33, signed; same engine, same 8 languages, landscape touch table |
+| Direct exe | [`ZhengShangYou.exe`](https://github.com/SiriusBlackJackson/Competitive-Poker-Game/releases/latest/download/ZhengShangYou.exe) | the game itself, ~130 KB — just double-click |
+| Portable | [`ZhengShangYou-Portable.zip`](https://github.com/SiriusBlackJackson/Competitive-Poker-Game/releases/latest/download/ZhengShangYou-Portable.zip) | unzip anywhere and run `ZhengShangYou.exe`; settings stay beside the exe |
+| Installer | [`ZhengShangYou-Setup.exe`](https://github.com/SiriusBlackJackson/Competitive-Poker-Game/releases/latest/download/ZhengShangYou-Setup.exe) | its own 8-language UI (switches instantly from a drop-down); installs to `%LOCALAPPDATA%\Programs\ZhengShangYou`, creates Desktop + Start Menu shortcuts, adds an entry to *Apps & features*, launches the game in the chosen language, and can uninstall itself (`--uninstall`) |
+| Android | [`ZhengShangYou.apk`](https://github.com/SiriusBlackJackson/Competitive-Poker-Game/releases/latest/download/ZhengShangYou.apk) | minSdk 21, targetSdk 33, signed; same engine, same 8 languages, landscape touch table |
 
-All release files use English names only.
+All four builds are attached to [Releases](https://github.com/SiriusBlackJackson/Competitive-Poker-Game/releases).
+The `releases/latest/download/…` links always point at the newest release, so they keep working
+when a new version is published. Release files use English names only.
 
 ## Screenshots
 
@@ -118,7 +121,21 @@ Command-line switches:
 
 ## Build from source
 
-No SDK, no NuGet, no third-party library — only `csc.exe` from the .NET Framework:
+No SDK, no NuGet, no third-party library — only `csc.exe` from the .NET Framework. The scripts
+were written for the nested layout used during development, so before building from this
+single-folder repository, put the files back where the scripts expect them:
+
+| File here | Goes to |
+| --- | --- |
+| `Core.cs` `Lang.cs` `Cards2D.cs` `UI.cs` `Game.cs` | `src\` |
+| `installer-Installer.cs` | `build\installer\Installer.cs` |
+| `build.ps1` `package.ps1` | `build\` |
+| `engine-*.java`, `app-*.java` | `android\app\src\main\java\com\zhengshengyou\engine\` and `…\app\` |
+| `AndroidManifest.xml`, `strings*.xml`, `ic_launcher-*.png` | `android\app\src\main\` (`res\values…`, `res\mipmap-…`) |
+| `game.ico` | `assets\icon\game.ico` |
+| `screenshot-*.png` | `assets\screenshots\` (only for the README) |
+
+Then:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File build\package.ps1
@@ -127,17 +144,22 @@ powershell -ExecutionPolicy Bypass -File build\package.ps1
 Output in `dist\`: `ZhengShangYou.exe`, `ZhengShangYou-Portable.zip`, `ZhengShangYou-Setup.exe`.
 Details: [BUILD.md](BUILD.md).
 
-## Project layout
+## Layout
+
+This repository deliberately keeps **every file in one folder**, so the whole project is visible
+in a single list. The prefix of each name says where it belongs:
 
 ```
-src/                Core.cs (rules engine) · Lang.cs (8-language table) ·
-                    Cards2D.cs (card art) · UI.cs (widgets, settings, dialogs) · Game.cs (game loop)
-assets/             icon/ , screenshots/
-build/              build.ps1 · package.ps1 · installer/Installer.cs (8-language setup)
-docs/               RULES.md · BUILD.md · ANDROID.md
-dist/               ready-to-run binaries committed here (exe, portable zip, setup, apk)
-android/            Android project (see ANDROID.md)
-.github/            CI workflow that builds the desktop files and the APK
+Core / Lang / Cards2D / UI / Game.cs      desktop sources (rules, 8-language table, card art, widgets, game loop)
+build.ps1 / package.ps1                   desktop build and packaging
+installer-Installer.cs                    8-language setup + uninstaller
+engine-*.java, app-*.java                 Android engine and touch UI
+AndroidManifest.xml, strings*.xml, ic_launcher-*.png   Android manifest, localized app names, launcher icons
+build-apk.ps1, generate-lang.ps1          Android build and the Lang.java generator
+RULES / BUILD / ANDROID / OVERVIEW / FILES.md         documentation
+screenshot-*.png, game.ico                screenshots and the icon
+ZhengShangYou.exe / -Portable.zip / -Setup.exe / .apk ready-to-run builds
+ci-build.yml                              the CI definition (restore it to .github/workflows/build.yml to run it)
 ```
 
 ## Android
@@ -162,14 +184,10 @@ Build instructions and the current status are in
 
 ## Repository
 
-Every source file, the documentation, the screenshots and the four ready-to-run binaries
-live in this repository — clone it and `dist\` already contains a working game, installer and
-APK. To rebuild:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File build\package.ps1      # exe + portable zip + setup
-powershell -ExecutionPolicy Bypass -File android\build\build-apk.ps1   # APK
-```
+Every source file, the documentation, the screenshots and the four ready-to-run builds live in
+this repository, all in the root folder: `ZhengShangYou.exe`, `ZhengShangYou-Portable.zip`,
+`ZhengShangYou-Setup.exe` and `ZhengShangYou.apk`. They can be downloaded directly; rebuilding
+them from source only needs the folder layout restored (table above).
 
 To publish your own copy, create an empty repository on GitHub and push:
 
